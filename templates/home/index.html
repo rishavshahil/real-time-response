@@ -8,6 +8,9 @@
   </head>
   <body>
     <div class="container my-5">
+      <div class="progress mb-3">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+      </div>
       <textarea name="" id="message" cols="30" rows="10" class="form-control mb-2"></textarea>
       <button class="btn btn-primary" id="send-btn">Send</button>
     </div>
@@ -15,7 +18,18 @@
     </form> -->
 
     <script>
-        var ws = new WebSocket('ws://127.0.0.1:8000/ws/ac/');
+        
+        let sendBtn = document.getElementById('send-btn');
+        let message = document.getElementById('message');
+        let ws = new WebSocket('ws://127.0.0.1:8000/ws/ac/');
+
+        function calculateProgress(current, total){
+          let progressBar = document.querySelector('.progress-bar');
+          let persent = (current/total)*100;
+
+          progressBar.style.width = persent + '%';
+          progressBar.innerHTML = persent + "%";
+        }
 
         // ws.onopen = function(){
         //     console.log("Webshocket Connection Open");
@@ -33,9 +47,6 @@
         // ws.onclose = function(event){
         //     console.log("Webshocket Connection Close", event);
         // }
-        sendBtn = document.getElementById('send-btn');
-        message = document.getElementById('message');
-
         ws.addEventListener('open', ()=>{
             console.log("Webshocket Connection Open");
             sendBtn.onclick = function(){
@@ -43,7 +54,9 @@
             }
         })
         ws.addEventListener('message', (event)=>{
-            console.log("Message Recieve From server", event);
+            let data = JSON.parse(event['data']);
+            console.log("Message Recieve From server", data);
+            calculateProgress(data['count'], data['total']);
         })
         ws.addEventListener('error', (event)=>{
             console.log("Websocket Error Occour", event);

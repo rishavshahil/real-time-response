@@ -3,7 +3,7 @@ from channels.exceptions import StopConsumer
 from time import sleep
 import asyncio
 from .helpers import rishav
-
+import json
 class MyAsyncComsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         print("websocket connected..", event)
@@ -20,11 +20,16 @@ class MyAsyncComsumer(AsyncConsumer):
         #     'text': 'Message Send To Client'
         # })
         urls = event['text'].split()
-        for url in urls:
+        total = len(urls)
+        for count, url in enumerate(urls, 1):
             x = rishav(url)
             await self.send({
                 'type': 'websocket.send',
-                'text': x
+                'text': json.dumps({
+                    'total': total,
+                    'count': count,
+                    'url': x 
+                })
             })
             await asyncio.sleep(1)
 
