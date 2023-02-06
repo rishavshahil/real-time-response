@@ -25,7 +25,7 @@
 
         function calculateProgress(current, total){
           let progressBar = document.querySelector('.progress-bar');
-          let persent = (current/total)*100;
+          let persent = Math.round(((current/total)*100) * 100) / 100;
 
           progressBar.style.width = persent + '%';
           progressBar.innerHTML = persent + "%";
